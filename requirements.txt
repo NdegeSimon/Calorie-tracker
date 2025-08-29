@@ -2,3 +2,4 @@ sqlalchemy
 click
 tabulate
 python-dotenv
+passlib

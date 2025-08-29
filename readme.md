@@ -1,4 +1,4 @@
-# EcoTracker
+# ECOTRACKER
 
 ## Overview
 
@@ -21,7 +21,6 @@ The project is built with a modular architecture, leveraging Python and SQLAlche
 To set up EcoTracker, ensure you have the following installed:
 
 - **Python:** Version 3.8 or higher (for CLI and backend)
-- **Node.js:** Version 16 or higher (for web frontend)
 - **pip:** Python package manager
 - **npm:** Node package manager
 - **Virtualenv (optional, recommended):** For isolated Python environments
@@ -89,12 +88,6 @@ python main.py
 ```
 This starts the Python backend server, typically on http://localhost:5000.
 
-**Start the Frontend (Web App):**
-```bash
-cd frontend
-npm start
-```
-This launches the React app, accessible at http://localhost:3000.
 
 **Run CLI Commands:**
 ```bash
@@ -159,7 +152,8 @@ The CLI provides a powerful way to interact with EcoTracker. Below are common co
 ecotracker/                 # Python backend (API and CLI logic)
 ├── main.py              # Main backend script
 ├── models.py            # SQLAlchemy models (User, Activity)
-├── requirements.txt         # Python dependencies
+├── operations.py
+|── requirements.txt         # Python dependencies
 ├── .env                     # Environment variables            # Template for .env
 └── README.md                # This file
 ```
@@ -174,11 +168,4 @@ EcoTracker is licensed under the MIT License. See the LICENSE file for full deta
 - **GitHub:** [EcoTracker Issues](https://github.com/eco-tracker/ecotracker/issues)
 - **Community Forum:** Join discussions at [community.ecotracker.org](https://community.ecotracker.org)
 - **Twitter:** Follow us at [@EcoTrackerApp](https://twitter.com/EcoTrackerApp)
-
-## Roadmap
-
-- **v1.1:** Add support for custom emission factors.
-- **v1.2:** Introduce mobile apps (iOS/Android) with React Native.
-- **v2.0:** Integrate machine learning for predictive sustainability insights.
-- **Ongoing:** Expand community features and third-party integrations (e.g., smart home devices).
 

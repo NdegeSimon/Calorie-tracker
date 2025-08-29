@@ -4,9 +4,11 @@ from tabulate import tabulate
 from sqlalchemy.sql import func
 from models import Goal
 from datetime import datetime
+from passlib.hash import bcrypt
+import json
+import traceback
 
 # Emission factors dictionary (kg CO2 per unit of quantity)
-# Sources: Our World in Data for transport; global averages for electricity.
 EMISSION_FACTORS = {
     "Driving": 0.170,  # kg CO2 per km (petrol car average)
     "Flying Domestic": 0.246,  # kg CO2 per km
@@ -14,29 +16,56 @@ EMISSION_FACTORS = {
     "Bus": 0.089,  # kg CO2 per km
     "Train": 0.035,  # kg CO2 per km (national rail)
     "Electricity": 0.475,  # kg CO2 per kWh (global average)
-    # Add more as needed, e.g., "Beef Consumption": 60.0  # kg CO2 per kg
 }
+
+def verify_user(username: str, password: str) -> bool:
+    """Verify user credentials against the database."""
+    session = SessionLocal()
+    try:
+        user = session.query(User).filter_by(username=username).first()
+        if not user:
+            print(f"No user found with username: {username}")
+            return False
+        if not hasattr(user, 'password_hash'):
+            print("Error: User model missing password_hash field")
+            return False
+        if bcrypt.verify(password, user.password_hash):
+            print(f"Login successful for {username}")
+            return True
+        else:
+            print("Incorrect password")
+            return False
+    except Exception as e:
+        print(f"Error verifying user: {e}")
+        traceback.print_exc()
+        return False
+    finally:
+        session.close()
 
 def calculate_emission(activity_type: str, quantity: float) -> float:
     factor = EMISSION_FACTORS.get(activity_type)
     if factor:
         return quantity * factor
-    return 0.0  # Return 0 if no factor, to indicate manual input needed
+    return 0.0
 
-def add_user(username: str):
-    print("Add new User")
-    if not username:
-        print("Username cannot be empty!")
-        return
+def add_user(username: str, password: str) -> bool:
+    """Add a new user with hashed password."""
+    session = SessionLocal()
     try:
-        session = SessionLocal()
-        new_user = User(username=username)
+        if session.query(User).filter_by(username=username).first():
+            print(f"Error: Username {username} already exists.")
+            return False
+        password_hash = bcrypt.hash(password)
+        new_user = User(username=username, password_hash=password_hash)
         session.add(new_user)
         session.commit()
         print(tabulate([[f"User '{username}' added!"]], tablefmt="grid"))
+        return True
     except Exception as e:
         session.rollback()
-        print(f"Error adding user: {e}\n")
+        print(f"Error adding user: {e}")
+        traceback.print_exc()
+        return False
     finally:
         session.close()
 
@@ -49,12 +78,11 @@ def add_activity(user_id: int, activity_type: str, quantity: float, emission: fl
             print(f"No user found with ID {user_id}!\n")
             return
         
-        # Use provided emission or calculated one
         if emission is None:
             emission = calculate_emission(activity_type, quantity)
             if emission == 0.0:
                 print("No auto-calculation available for this activity type.")
-                return  # Will prompt for manual in main.py
+                return
         
         new_activity = Activity(
             user_id=user_id,
@@ -156,7 +184,7 @@ def delete_user(user_id: int):
         print(f"Error deleting user: {e}\n")
     finally:
         session.close()
-        
+
 def get_all_users():
     session = SessionLocal()
     try:
@@ -167,18 +195,7 @@ def get_all_users():
         return []
     finally:
         session.close()
-def delete_all_activities():
-    print("Delete All Activities")
-    session = SessionLocal()
-    try:
-        deleted = session.query(Activity).delete()
-        session.commit()
-        print(f"Deleted {deleted} activities!\n")
-    except Exception as e:
-        session.rollback()
-        print(f"Error deleting activities: {e}\n")
-    finally:
-        session.close()
+
 def add_goal(user_id: int, description: str, target_emission: float, deadline: datetime):
     session = SessionLocal()
     try:
@@ -196,7 +213,7 @@ def add_goal(user_id: int, description: str, target_emission: float, deadline: d
         print(f"Error adding goal: {e}\n")
     finally:
         session.close()
-        
+
 def list_goals():
     session = SessionLocal()
     try:
@@ -211,7 +228,7 @@ def list_goals():
         print(f"Error listing goals: {e}\n")
     finally:
         session.close()
-        
+
 def delete_all_activities():
     print("Delete All Activities")
     session = SessionLocal()
@@ -222,5 +239,39 @@ def delete_all_activities():
     except Exception as e:
         session.rollback()
         print(f"Error deleting activities: {e}\n")
+    finally:
+        session.close()
+
+def export_activities_to_json(username: str, filename: str = "emissions.json"):
+    """Export a user's activities to a JSON file."""
+    session = SessionLocal()
+    try:
+        user = session.query(User).filter_by(username=username).first()
+        if not user:
+            print(f"No user found with username {username}!\n")
+            return
+        activities = session.query(Activity).filter_by(user_id=user.id).all()
+        if not activities:
+            print(f"No activities found for user {username}!\n")
+            return
+        
+        data = {
+            "username": username,
+            "activities": [
+                {
+                    "id": a.id,
+                    "activity_type": a.activity_type,
+                    "quantity": a.quantity,
+                    "emission": a.emission,
+                    "date": a.activity_date.strftime("%Y-%m-%d %H:%M:%S")
+                } for a in activities
+            ]
+        }
+        
+        with open(filename, "w") as f:
+            json.dump(data, f, indent=4)
+        print(f"Activities exported to {filename} successfully!\n")
+    except Exception as e:
+        print(f"Error exporting activities to JSON: {e}\n")
     finally:
         session.close()
