@@ -1,6 +1,7 @@
 from operations import add_user, add_activity, list_activities, list_users, display_emissions_bar_chart, delete_user, EMISSION_FACTORS, add_goal, list_goals, delete_all_activities
 from models import SessionLocal, User
-
+from tabulate import tabulate
+from datetime import datetime
 def main():
     while True:
         print("EcoTracker Menu")
@@ -29,8 +30,8 @@ def main():
                     continue
                 print("Available users:")
                 for user in users:
-                    print(f"ID: {user.id}, Username: {user.username}")
-                
+                    print((f"ID: {user.id}, Username: {user.username}"))
+
                 user_id = input("Input User ID: ").strip()
                 if not user_id.isdigit():
                     print("User ID must be a number!\n")
@@ -131,11 +132,8 @@ def main():
                 add_goal(user_id, description, target_emission, deadline_dt)
             finally:
                 session.close()
-        
-        elif choice == "7":
-            # List Goals
-            list_goals()
-        
+                print("============================================================")
+
         elif choice == "8":
             # Delete User
             session = SessionLocal()

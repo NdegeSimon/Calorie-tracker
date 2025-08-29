@@ -12,8 +12,6 @@ The project is built with a modular architecture, leveraging Python and SQLAlche
 - **Data Visualization:** Generate interactive charts (bar, line, or pie) to visualize your environmental impact over time, available in the web app and as CLI-generated plots using Matplotlib.
 - **Sustainability Goals:** Set and track personalized eco-friendly goals, such as reducing carbon emissions by 15% or cutting energy usage by 20 kWh per month.
 - **Multi-Platform Support:** Access EcoTracker via a web interface (React-based), iOS/Android apps (in development), or a powerful CLI for advanced users and automation.
-- **Community Features:** Share sustainability tips, progress, and achievements with the EcoTracker community through integrated forums or social sharing options.
-- **Data Export:** Export your tracked data as CSV, JSON, or PDF for reporting, analysis, or integration with other tools.
 - **User Management:** Manage multiple users with distinct profiles, ideal for households or teams, with support for role-based access in the web app.
 
 ## Installation
@@ -63,31 +61,9 @@ Example `requirements.txt`:
 ```
 sqlalchemy==2.0.0
 click==8.1.3
-matplotlib==3.7.0
 python-dotenv==1.0.0
 ```
 
-#### 3. Set Up the Web Frontend (if using the web interface)
-
-Navigate to the frontend directory:
-
-```bash
-cd frontend
-npm install
-```
-This installs React and other JavaScript dependencies.
-
-#### 4. Configure Environment Variables
-
-Copy the example environment file:
-
-```bash
-cp .env.example .env
-```
-
-Edit `.env` to include your database URL and API keys. Example `.env`:
-
-```
 DATABASE_URL=sqlite:///ecotracker.db
 API_KEY=your_api_key_here
 WEB_PORT=3000
@@ -140,7 +116,7 @@ The CLI provides a powerful way to interact with EcoTracker. Below are common co
 
 - **Add a User:**
   ```bash
-  python ecotrack.py add_user --name "John Doe" --email "john@example.com"
+  python ecotrack.py add_user --name "John Doe" 
   ```
   Creates a new user profile with a unique ID.
 
@@ -180,15 +156,11 @@ The CLI provides a powerful way to interact with EcoTracker. Below are common co
 ## Project Structure
 
 ```
-ecotracker/
-├── backend/                  # Python backend (API and CLI logic)
-│   ├── main.py              # Main backend script
-│   ├── models.py            # SQLAlchemy models (User, Activity)
-│ 
-├
+ecotracker/                 # Python backend (API and CLI logic)
+├── main.py              # Main backend script
+├── models.py            # SQLAlchemy models (User, Activity)
 ├── requirements.txt         # Python dependencies
-├── .env                     # Environment variables
-├── .env.example             # Template for .env
+├── .env                     # Environment variables            # Template for .env
 └── README.md                # This file
 ```
 
@@ -210,7 +182,3 @@ EcoTracker is licensed under the MIT License. See the LICENSE file for full deta
 - **v2.0:** Integrate machine learning for predictive sustainability insights.
 - **Ongoing:** Expand community features and third-party integrations (e.g., smart home devices).
 
-## Acknowledgments
-
-Thanks to the open-source community for contributions to libraries like SQLAlchemy, Click, and React.  
-Inspired by global sustainability initiatives like the UN Sustainable Development Goals.

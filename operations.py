@@ -33,7 +33,7 @@ def add_user(username: str):
         new_user = User(username=username)
         session.add(new_user)
         session.commit()
-        print(f"User '{username}' added!\n")
+        print(tabulate([[f"User '{username}' added!"]], tablefmt="grid"))
     except Exception as e:
         session.rollback()
         print(f"Error adding user: {e}\n")
@@ -218,7 +218,7 @@ def delete_all_activities():
     try:
         deleted = session.query(Activity).delete()
         session.commit()
-        print(f"Deleted {deleted} activities!\n")
+        print(tabulate([[f"Deleted {deleted} activities!"]], tablefmt="grid"))
     except Exception as e:
         session.rollback()
         print(f"Error deleting activities: {e}\n")
