@@ -2,6 +2,8 @@ from sqlalchemy.orm import Session
 from models import User, Activity, SessionLocal
 from tabulate import tabulate
 from sqlalchemy.sql import func
+from models import Goal
+from datetime import datetime
 
 # Emission factors dictionary (kg CO2 per unit of quantity)
 # Sources: Our World in Data for transport; global averages for electricity.
@@ -165,6 +167,51 @@ def get_all_users():
         return []
     finally:
         session.close()
+def delete_all_activities():
+    print("Delete All Activities")
+    session = SessionLocal()
+    try:
+        deleted = session.query(Activity).delete()
+        session.commit()
+        print(f"Deleted {deleted} activities!\n")
+    except Exception as e:
+        session.rollback()
+        print(f"Error deleting activities: {e}\n")
+    finally:
+        session.close()
+def add_goal(user_id: int, description: str, target_emission: float, deadline: datetime):
+    session = SessionLocal()
+    try:
+        new_goal = Goal(
+            user_id=user_id,
+            description=description,
+            target_emission=target_emission,
+            deadline=deadline
+        )
+        session.add(new_goal)
+        session.commit()
+        print("Goal added!\n")
+    except Exception as e:
+        session.rollback()
+        print(f"Error adding goal: {e}\n")
+    finally:
+        session.close()
+        
+def list_goals():
+    session = SessionLocal()
+    try:
+        goals = session.query(Goal).all()
+        if not goals:
+            print("No goals found!\n")
+            return
+        table = [(g.id, g.user_id, g.description, g.target_emission, g.deadline.strftime('%Y-%m-%d')) for g in goals]
+        print(tabulate(table, headers=["ID", "User ID", "Description", "Target Emission", "Deadline"], tablefmt="grid"))
+        print()
+    except Exception as e:
+        print(f"Error listing goals: {e}\n")
+    finally:
+        session.close()
+        
 def delete_all_activities():
     print("Delete All Activities")
     session = SessionLocal()

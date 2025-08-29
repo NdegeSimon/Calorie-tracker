@@ -1,109 +1,216 @@
-EcoTracker
+# EcoTracker
 
-Overview
+## Overview
 
-EcoTracker is an open-source application designed to help users monitor and manage their environmental impact. Track your carbon footprint, energy consumption, or other ecological metrics with an intuitive interface and powerful data visualization tools. Whether you're an individual looking to live more sustainably or a business aiming to meet environmental goals, EcoTracker provides the tools to make informed decisions.
+EcoTracker is an open-source platform designed to empower individuals, households, and businesses to monitor, analyze, and reduce their environmental impact. By tracking key metrics such as carbon footprint, energy consumption, water usage, and waste production, EcoTracker provides actionable insights through intuitive data visualizations and goal-setting tools. Whether you’re an environmentally conscious individual aiming to live more sustainably or an organization striving to meet ESG (Environmental, Social, and Governance) targets, EcoTracker offers flexible solutions via a command-line interface (CLI) and a web application.
 
-Features
+The project is built with a modular architecture, leveraging Python and SQLAlchemy for the CLI and backend, and React with Node.js for the web interface. It supports local data storage with SQLite and optional cloud-based database integration for scalability. EcoTracker is designed to be extensible, making it an excellent starting point for developers interested in sustainability-focused applications.
 
-Data Tracking: Log daily activities like transportation, energy usage, or waste production.
+## Features
 
-Visual Analytics: View your environmental impact through charts and graphs.
+- **Automatic Emission Calculations:** Compute carbon emissions using built-in emission factors (e.g., kg CO2 per kilometer driven) based on industry-standard databases.
+- **Data Visualization:** Generate interactive charts (bar, line, or pie) to visualize your environmental impact over time, available in the web app and as CLI-generated plots using Matplotlib.
+- **Sustainability Goals:** Set and track personalized eco-friendly goals, such as reducing carbon emissions by 15% or cutting energy usage by 20 kWh per month.
+- **Multi-Platform Support:** Access EcoTracker via a web interface (React-based), iOS/Android apps (in development), or a powerful CLI for advanced users and automation.
+- **Community Features:** Share sustainability tips, progress, and achievements with the EcoTracker community through integrated forums or social sharing options.
+- **Data Export:** Export your tracked data as CSV, JSON, or PDF for reporting, analysis, or integration with other tools.
+- **User Management:** Manage multiple users with distinct profiles, ideal for households or teams, with support for role-based access in the web app.
 
-Goal Setting: Set and track sustainability goals (e.g., reduce carbon emissions by 10%).
+## Installation
 
-Cross-Platform: Available on web, iOS, and Android (depending on the version).
+### Prerequisites
 
-Community Sharing: Share your progress and tips with the EcoTracker community.
+To set up EcoTracker, ensure you have the following installed:
 
-Installation
+- **Python:** Version 3.8 or higher (for CLI and backend)
+- **Node.js:** Version 16 or higher (for web frontend)
+- **pip:** Python package manager
+- **npm:** Node package manager
+- **Virtualenv (optional, recommended):** For isolated Python environments
+- **Web Browser:** Chrome, Firefox, or Safari (latest versions for web app)
+- **Git:** For cloning the repository
+- **SQLite:** Included with Python, but ensure compatibility for database operations
+- **Optional:** PostgreSQL or MySQL for advanced database configurations
 
-Prerequisites
+### Setup Instructions
 
-Node.js (v16 or higher)
+Follow these steps to get EcoTracker up and running locally:
 
-Python (v3.8 or higher, for backend scripts)
+#### 1. Clone the Repository
 
-A modern web browser (for the web version)
+```bash
+git clone https://github.com/eco-tracker/ecotracker.git
+cd ecotracker
+```
+This downloads the EcoTracker source code to your local machine. Ensure you have Git installed (`git --version` to verify).
 
-Steps
+#### 2. Set Up the CLI Environment
 
-Clone the Repository:
+Create and activate a virtual environment to isolate dependencies:
 
-git clone [https://github.com/eco-tracker/ecotracker.git](https://github.com/eco-tracker/ecotracker.git) cd ecotracker
+```bash
+python -m venv env
+source env/bin/activate  # On Windows: env\Scripts\activate
+```
 
-Install Dependencies:
+Install Python dependencies:
 
-For the frontend (React-based):
+```bash
+pip install -r requirements.txt
+```
 
-cd frontend npm install
+Example `requirements.txt`:
+```
+sqlalchemy==2.0.0
+click==8.1.3
+matplotlib==3.7.0
+python-dotenv==1.0.0
+```
 
-For the backend (Python-based):
+#### 3. Set Up the Web Frontend (if using the web interface)
 
-cd backend pip install -r requirements.txt
+Navigate to the frontend directory:
 
-Set Up Environment Variables:
+```bash
+cd frontend
+npm install
+```
+This installs React and other JavaScript dependencies.
 
-Create a .env file in the backend directory based on .env.example.
+#### 4. Configure Environment Variables
 
-Add your database credentials and API keys as needed.
+Copy the example environment file:
 
-Run the Application:
+```bash
+cp .env.example .env
+```
 
-Start the backend server:
+Edit `.env` to include your database URL and API keys. Example `.env`:
 
-cd backend python main.py
+```
+DATABASE_URL=sqlite:///ecotracker.db
+API_KEY=your_api_key_here
+WEB_PORT=3000
+API_PORT=5000
+```
 
-Start the frontend:
+For PostgreSQL/MySQL, update `DATABASE_URL` (e.g., `postgresql://user:password@localhost:5432/ecotracker`).
 
-cd frontend npm start
+#### 5. Initialize the Database
 
-Access the App:
+Run the database setup script to create tables for users and activities:
 
-Open your browser and navigate to [http://localhost:3000](http://localhost:3000) for the frontend.
+```bash
+python scripts/init_db.py
+```
 
-The backend API will be available at [http://localhost:5000](http://localhost:5000).
+#### 6. Launch the Application
 
-Usage
+**Start the Backend (CLI and API):**
+```bash
+cd backend
+python main.py
+```
+This starts the Python backend server, typically on http://localhost:5000.
 
-Sign Up / Log In: Create an account or log in to start tracking.
+**Start the Frontend (Web App):**
+```bash
+cd frontend
+npm start
+```
+This launches the React app, accessible at http://localhost:3000.
 
-Log Activities: Input data such as miles driven, electricity used, or waste generated.
+**Run CLI Commands:**
+```bash
+python ecotrack.py --help
+```
+This displays available CLI commands for direct interaction.
 
-View Insights: Check the dashboard for visualizations of your environmental impact.
+#### 7. Access EcoTracker
 
-Set Goals: Use the goals feature to commit to reducing your footprint.
+- **Web Interface:** Open [http://localhost:3000](http://localhost:3000) in your browser.
+- **API:** Test endpoints at [http://localhost:5000/api](http://localhost:5000/api) (e.g., `/api/users`).
+- **CLI:** Use commands like `python ecotrack.py add_user --name "John Doe"`.
 
-Export Data: Download reports in CSV or PDF format for personal records or sharing.
+## Usage
 
-Example command to run a data import script:
+### CLI Usage
 
-python scripts/import\data.py --file data.csv
+The CLI provides a powerful way to interact with EcoTracker. Below are common commands:
 
-Contributing
+- **Add a User:**
+  ```bash
+  python ecotrack.py add_user --name "John Doe" --email "john@example.com"
+  ```
+  Creates a new user profile with a unique ID.
 
-We welcome contributions! To get started:
+- **Log an Activity:**
+  ```bash
+  python ecotrack.py add_activity --user_id 1 --type "driving" --quantity 50
+  ```
+  Logs an activity (e.g., 50 km driven) and calculates emissions automatically.
 
-Fork the repository.
+- **List Users or Activities:**
+  ```bash
+  python ecotrack.py list_users
+  python ecotrack.py list_activities --user_id 1
+  ```
+  Displays all users or a user’s activities.
 
-Create a new branch: git checkout -b feature/your-feature-name.
+- **Visualize Data:**
+  ```bash
+  python ecotrack.py show_chart --user_id 1
+  ```
+  Generates a Matplotlib bar chart of emissions by activity type.
 
-Make your changes and commit: git commit -m "Add your feature".
+- **Set a Goal:**
+  ```bash
+  python ecotrack.py set_goal --user_id 1 --type "carbon" --target 1000
+  ```
+  Sets a goal (e.g., limit carbon emissions to 1000 kg/year).
 
-Push to your fork: git push origin feature/your-feature-name.
 
-Open a pull request with a clear description of your changes.
 
-Please follow our Code of Conduct and check the Contributing Guidelines for more details.
+#### Example Workflow
 
-License
+- **Day 1:** Add a user (`add_user`), log 20 km of driving (`add_activity`), and view emissions (`show_chart`).
+- **Day 2:** Set a goal to reduce emissions by 10% (`set_goal`) and check progress on the web dashboard.
+- **Day 3:** Export your data (`export_data`) for a sustainability report.
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+## Project Structure
 
-Contact
+```
+ecotracker/
+├── backend/                  # Python backend (API and CLI logic)
+│   ├── main.py              # Main backend script
+│   ├── models.py            # SQLAlchemy models (User, Activity)
+│ 
+├
+├── requirements.txt         # Python dependencies
+├── .env                     # Environment variables
+├── .env.example             # Template for .env
+└── README.md                # This file
+```
 
-For questions or feedback, reach out to us at:
+## License
 
-Email: [support@ecotracker.org](mailto:support@ecotracker.org)
+EcoTracker is licensed under the MIT License. See the LICENSE file for full details.
 
-GitHub Issues: EcoTracker Issues
+## Contact
+
+- **Email:** support@ecotracker.org
+- **GitHub:** [EcoTracker Issues](https://github.com/eco-tracker/ecotracker/issues)
+- **Community Forum:** Join discussions at [community.ecotracker.org](https://community.ecotracker.org)
+- **Twitter:** Follow us at [@EcoTrackerApp](https://twitter.com/EcoTrackerApp)
+
+## Roadmap
+
+- **v1.1:** Add support for custom emission factors.
+- **v1.2:** Introduce mobile apps (iOS/Android) with React Native.
+- **v2.0:** Integrate machine learning for predictive sustainability insights.
+- **Ongoing:** Expand community features and third-party integrations (e.g., smart home devices).
+
+## Acknowledgments
+
+Thanks to the open-source community for contributions to libraries like SQLAlchemy, Click, and React.  
+Inspired by global sustainability initiatives like the UN Sustainable Development Goals.

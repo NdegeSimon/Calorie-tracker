@@ -1,4 +1,4 @@
-from operations import add_user, add_activity, list_activities, list_users, display_emissions_bar_chart, delete_user, EMISSION_FACTORS
+from operations import add_user, add_activity, list_activities, list_users, display_emissions_bar_chart, delete_user, EMISSION_FACTORS, add_goal, list_goals, delete_all_activities
 from models import SessionLocal, User
 
 def main():
@@ -9,10 +9,12 @@ def main():
         print("3. List Activities")
         print("4. List Users")
         print("5. Display Emissions Bar Chart")
-        print("6. Delete User")
-        print("7. Delete All Activities")
-        print("8. Exit")
-        choice = input("Choose an option (1-8): ").strip()
+        print("6. Add Goal")
+        print("7. List Goals")
+        print("8. Delete User")
+        print("9. Delete All Activities")
+        print("10. Exit")
+        choice = input("Choose an option (1-10): ").strip()
 
         if choice == "1":
             username = input("Input Username: ").strip()
@@ -92,21 +94,84 @@ def main():
         
         elif choice == "5":
             display_emissions_bar_chart()
-        
+        # ...existing code above...
+
         elif choice == "6":
-            user_id = input("Input User ID to delete: ").strip()
-            if not user_id.isdigit():
-                print("User ID must be a number!\n")
-                continue
-            user_id = int(user_id)
-            delete_user(user_id)
+            # Add Goal
+            session = SessionLocal()
+            try:
+                users = session.query(User).all()
+                if not users:
+                    print("No users found! Please add a user first.\n")
+                    continue
+                print("Available users:")
+                for user in users:
+                    print(f"ID: {user.id}, Username: {user.username}")
+                
+                user_id = input("Input User ID for the goal: ").strip()
+                if not user_id.isdigit():
+                    print("User ID must be a number!\n")
+                    continue
+                user_id = int(user_id)
+                
+                description = input("Goal Description: ").strip()
+                target_emission = input("Target Emission (kg CO2): ").strip()
+                try:
+                    target_emission = float(target_emission)
+                except ValueError:
+                    print("Target emission must be a number!\n")
+                    continue
+                deadline = input("Deadline (YYYY-MM-DD): ").strip()
+                try:
+                    from datetime import datetime
+                    deadline_dt = datetime.strptime(deadline, "%Y-%m-%d")
+                except ValueError:
+                    print("Invalid date format!\n")
+                    continue
+                add_goal(user_id, description, target_emission, deadline_dt)
+            finally:
+                session.close()
         
         elif choice == "7":
+            # List Goals
+            list_goals()
+        
+        elif choice == "8":
+            # Delete User
+            session = SessionLocal()
+            try:
+                users = session.query(User).all()
+                if not users:
+                    print("No users found!\n")
+                    continue
+                print("Available users:")
+                for user in users:
+                    print(f"ID: {user.id}, Username: {user.username}")
+                
+                user_id = input("Input User ID to delete: ").strip()
+                if not user_id.isdigit():
+                    print("User ID must be a number!\n")
+                    continue
+                user_id = int(user_id)
+                delete_user(user_id)
+            finally:
+                session.close()
+        
+        elif choice == "9":
+            # Delete All Activities
+            confirm = input("Are you sure you want to delete all activities? (y/n): ").strip().lower()
+            if confirm == 'y':
+                delete_all_activities()
+            else:
+                print("Operation cancelled.\n")
+        
+        elif choice == "10":
             print("Exiting EcoTracker...")
             break
         
         else:
             print("Invalid choice! Please try again.\n")
+
 
 if __name__ == "__main__":
     try:

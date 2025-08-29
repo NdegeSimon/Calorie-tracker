@@ -24,6 +24,22 @@ class Activity(Base):
     activity_date = Column(DateTime, default=datetime.utcnow)
     
     user = relationship("User", back_populates="activities")
+    
+class Goal(Base):
+    __tablename__ = 'goals'
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    description = Column(String(100), nullable=False)
+    target_emission = Column(Float, nullable=False)
+    deadline = Column(DateTime, nullable=False)
+
+    user = relationship("User", back_populates="goals")
+
+User.goals = relationship("Goal", back_populates="user", cascade="all, delete-orphan")
+
+
 
 Base.metadata.create_all(engine)
+
+
 
