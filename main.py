@@ -36,7 +36,7 @@ def main():
         current_user = load_session()
         print("EcoTracker Menu")
         print("1. Log in")
-        print("2. Add User")
+        print("2. Sign Up")
         if current_user:
             print(f"Logged in as: {current_user}")
             print("3. Add Activity")

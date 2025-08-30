@@ -143,7 +143,7 @@ def display_emissions_bar_chart():
     try:
         results = (
             session.query(User.username, func.sum(Activity.emission).label("total_emission"))
-            .join(Activity)
+            .join(Activity, User.id == Activity.user_id)
             .group_by(User.id)
             .all()
         )
